@@ -121,45 +121,53 @@ public class Complex {
         return Objects.hash(re, im);
     }
 
+    /*********************************************
+    ORIGINAL CODE FOR FFT PROJECT
+    *********************************************/
+
     public Complex copy(){
       return new Complex(this.re, this.im);
     }
 
-    //for use in nth roots of unity. Gets the kth complex nth root of unity
-    //this runs in roughly O(1).
-    public static Complex kOverN(double k, double n){
+    //important values
+    private static final Complex i = new Complex(0.0, 1.0);
+    private static final Complex pi2 = new Complex(Math.PI*2, 0.0);
+    private static final Complex pi2i = i.times(pi2); //2pi*i (or, 0a+2pi*bi)
 
-      //important values
-      Complex i = new Complex(0.0, 1.0);
-      Complex pi2 = new Complex(Math.PI*2, 0.0);
-      Complex pi2i = i.times(pi2); //2pi*i (or, 0a+2pi*bi)
+    /**
+    Recall: The nth roots of unity are the n solutions (x) to the equation x^n = 1
 
-      Complex KN = new Complex(k/n, 0.0);//just k/n, double division
+    Gets the kth complex nth root of unity, runs in roughly O(1).
+    **/
+    public static Complex kthNthRootOfUnity(double k, double n){
+      Complex KN = new Complex(k/n, 0.0); //just k/n, double division
       //KN.times(pi2i) = 2pi*i*(k/n)
       //.exp() = e^(2pi*i*k/n)--> this is the kth complex nth root of unity
       Complex res = (KN.times(pi2i)).exp();
 
-      double re2 = res.re, im2 = res.im;
+      double realCoef = res.re, imaginaryCoef = res.im;
       //rounding
-      if (re2 < .0000001 && re2 > -0.000001) re2 = 0.;
-      if (im2 < .0000001 && im2 > -0.000001) im2 = 0.;
+      if (realCoef < .0000001 && realCoef > -0.000001)
+          realCoef = 0.;
+      if (imaginaryCoef < .0000001 && imaginaryCoef > -0.000001)
+          imaginaryCoef = 0.;
 
-      return new Complex(re2, im2);
-
+      return new Complex(realCoef, imaginaryCoef);
     }
 
     // sample client for testing
     public static void main(String[] args) {
         int n = Integer.parseInt(args[0]);
         for (int i=0; i<n; i++){
-          System.out.println(kOverN(i,n));
+          System.out.println(kthNthRootOfUnity(i,n));
         }
     }
 
     /*
     Notes w complex #s:
-    recall e^0 = 1
+    recall:
+      e^0 = 1
       e^(pi*i) = -1 because e^(pi*i)+1=0 (Euler's Identity)
+      e^(pi/2*i) = sqrt(e^(pi*i)) = sqrt(-1) = i
     */
-
 }
